@@ -21,7 +21,7 @@ p.setAdditionalSearchPath(pybullet_data.getDataPath())
 p.loadURDF("plane.urdf")
 p.setGravity(0, 0, -9.8)
 
-robot_id = p.loadURDF("../URDF/franka_panda/panda_with_2F85_sec.urdf",[0, 0, 0], useFixedBase=True)
+robot_id = p.loadURDF("/home/aniruth/Embodiment-Codes-RRC/URDF/franka_panda/panda_with_2F85_sec.urdf",[0, 0, 0], useFixedBase=True)
 
 end_effector_link_index = 7
 positions = []

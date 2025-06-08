@@ -1,0 +1,3 @@
+[submodule "URDF/franka_panda/robotiq_arg85_description"]
+	path = URDF/franka_panda/robotiq_arg85_description
+	url = https://github.com/a-price/robotiq_arg85_description.git

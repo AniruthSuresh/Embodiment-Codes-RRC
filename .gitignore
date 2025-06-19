@@ -1,2 +1,7 @@
 
 ../Robot_arm_motion/filtered_arm_pics_fin_rlds/filtered_arm_pics_fin_rlds
+/Data-Extraction
+/images_left_full
+/images_right_full
+/Intrinsics_and_Image_extraction/extracted_data
+/filtered_arm_pics_fin_rlds

@@ -15,13 +15,13 @@ import matplotlib.pyplot as plt
 import shutil
 
 
-p.connect(p.GUI)
+p.connect(p.DIRECT)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
 
 p.loadURDF("plane.urdf")
 p.setGravity(0, 0, -9.8)
 
-robot_id = p.loadURDF("/home/aniruth/Embodiment-Codes-RRC/URDF/franka_panda/panda_with_2F85_sec.urdf",[0, 0, 0], useFixedBase=True)
+robot_id = p.loadURDF("/home/rrcadmin/cross-emb/Embodiment-Codes-RRC/URDF/franka_panda/panda_with_2F85_sec.urdf",[0, 0, 0], useFixedBase=True)
 
 end_effector_link_index = 7
 positions = []
@@ -43,7 +43,7 @@ joint_positions = []
 
 
 # when the .txt files are properly formatted
-with open("../data/scene_4/joint_ps.txt", "r") as file:
+with open("Data-Extraction/2/joint_ps.txt", "r") as file:
     for line in file:
         try:
             joint_positions.append(eval(line.strip()))  # Read joint positions as a list
@@ -149,7 +149,7 @@ def cvK2BulletP():
     w = 320
 
     old_dims = (720 , 1280)
-    new_dims = (180 , 320)
+    new_dims = (h , w)
 
 
     """
@@ -168,13 +168,20 @@ def cvK2BulletP():
     """
     scene - 12 
     """
+    # K_old = np.array([
+    #     [528.415, 0, 653.073],
+    #     [0, 528.415, 348.835],
+    #     [0, 0, 1]
+    # ])
+
+    """
+    scene - 2
+    """
     K_old = np.array([
-        [522.845, 0, 648.825],
-        [0, 522.845, 354.744],
+        [522.061, 0, 661.827],
+        [0, 522.061, 355.399],
         [0, 0, 1]
     ])
-
-
 
     """
     All AutoLab setup 
@@ -273,8 +280,12 @@ scene - 2
 # camera_orientation = p.getQuaternionFromEuler([-1.77092, -0.0652779, -2.76283])
 
 # the below one is for camera - 29431508 right 
-# camera_position = [0.326989,	0.459881	,0.303022]
-# camera_orientation = p.getQuaternionFromEuler([-1.77039	,-0.0659621	,-2.76027])
+camera_position = [0.326989,	0.459881	,0.303022]
+camera_orientation = p.getQuaternionFromEuler([-1.77039	,-0.0659621	,-2.76027])
+
+# the below one is for camera - 29513368 left 
+# camera_position = [0.39315361,-0.31915743 ,0.37105794 ]
+# camera_orientation = p.getQuaternionFromEuler([-1.81866455,-0.02428309,0.09807736])
 
 """
 scene - 3
@@ -288,8 +299,8 @@ scene - 3
 scene - 4 - GOOD !
 """
 # # left
-camera_position = [0.085036	,0.563473	,0.416859]
-camera_orientation = p.getQuaternionFromEuler([-1.95721,	-0.0233935	,-2.11812])
+# camera_position = [0.085036	,0.563473	,0.416859]
+# camera_orientation = p.getQuaternionFromEuler([-1.95721,	-0.0233935	,-2.11812])
 
 
 #right

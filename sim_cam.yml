@@ -128,7 +128,6 @@ dependencies:
       - sphinxcontrib-napoleon==0.7
       - sphinxcontrib-qthelp==1.0.3
       - sphinxcontrib-serializinghtml==1.1.5
-      - tf==1.0.0
       - threadpoolctl==3.1.0
       - tomli==2.0.1
       - typing-extensions==4.7.1
@@ -136,4 +135,4 @@ dependencies:
       - wcwidth==0.2.13
       - yacs==0.1.8
       - zipp==3.15.0
-prefix: /home/aniruth/anaconda3/envs/sim_cam
+prefix: /home/rrcadmin/anaconda3/envs/sim_cam

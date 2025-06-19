@@ -47,6 +47,8 @@ def overlay_images_to_video(folder1, folder2, output_folder='overlayed_images', 
             print(f"Error: Could not read images {images1[i]} or {images2[i]}")
             continue
 
+        print(img1.shape)
+        print(img2.shape)
 
         overlay = cv2.addWeighted(img1, 0.5, img2, 0.5, 0)
 
@@ -61,8 +63,8 @@ def overlay_images_to_video(folder1, folder2, output_folder='overlayed_images', 
     print(f"Overlayed video saved as '{video_output}'.")
  
 
-masked_pics = "../Robot_arm_motion/filtered_arm_pics_fin_rlds/"
+masked_pics = "filtered_arm_pics_fin_rlds"
 
-original_pics_path = "../data/scene_4/images_left/"
+original_pics_path = "Data-Extraction/2/images_right"
 
-overlay_images_to_video(original_pics_path , masked_pics , video_output = "scene_7_overlay.mp4")
+overlay_images_to_video(original_pics_path , masked_pics , video_output = "scene_2_overlay.mp4")

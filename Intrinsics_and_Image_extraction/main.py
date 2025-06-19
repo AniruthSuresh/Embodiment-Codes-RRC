@@ -3,7 +3,7 @@ from camera_utils import SVOReader
 import cv2
 
 
-svo_files = ["../Intrinsics_and_Image_extraction/data/22246076.svo",]
+svo_files = ["Data-Extraction/2/29513368.svo"]
 # NOTE : The aspect ratio is the same 
 # (780 ,1280 ) -> (180 , 320)
 
@@ -15,10 +15,19 @@ for svo_file in svo_files:
     print(f"Processing SVO file: {serial_number}")
 
     # Create folders for left and right images
-    left_folder = os.path.join(os.getcwd(), "images_left")
-    right_folder = os.path.join(os.getcwd(), "images_right")
+    left_folder_resized = os.path.join(os.getcwd(),"2", serial_number,"images_left_resized")
+    right_folder_resized = os.path.join(os.getcwd(),"2",serial_number, "images_right_resized")
+
+    left_folder = os.path.join(os.getcwd(),"2", serial_number,"images_left")
+    right_folder = os.path.join(os.getcwd(),"2", serial_number, "images_right")
+
+    os.makedirs(os.path.join(os.getcwd(),"2"),exist_ok=True)
+    os.makedirs(os.path.join(os.getcwd(),"2",serial_number),exist_ok=True)
+
     os.makedirs(left_folder, exist_ok=True)
     os.makedirs(right_folder, exist_ok=True)
+    os.makedirs(left_folder_resized, exist_ok=True)
+    os.makedirs(right_folder_resized, exist_ok=True)
 
     reader = SVOReader(svo_file, serial_number)
 
@@ -47,9 +56,16 @@ for svo_file in svo_files:
             right_image_resized = cv2.resize(right_image, (target_width, target_height), interpolation=cv2.INTER_AREA)
 
             # Save the downscaled images
+            left_image_path_res = os.path.join(left_folder_resized, f"{serial_number}_left_{frame_index:04d}.png")
+            right_image_path_res = os.path.join(right_folder_resized, f"{serial_number}_right_{frame_index:04d}.png")
+
             left_image_path = os.path.join(left_folder, f"{serial_number}_left_{frame_index:04d}.png")
             right_image_path = os.path.join(right_folder, f"{serial_number}_right_{frame_index:04d}.png")
-            cv2.imwrite(left_image_path, left_image_resized)
-            cv2.imwrite(right_image_path, right_image_resized)
+
+            cv2.imwrite(left_image_path_res, left_image_resized)
+            cv2.imwrite(right_image_path_res, right_image_resized)
+
+            cv2.imwrite(left_image_path, left_image)
+            cv2.imwrite(right_image_path, right_image)
 
     print("Finished extracting, downscaling, and saving images.")

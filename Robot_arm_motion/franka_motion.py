@@ -219,7 +219,7 @@ def cvK2BulletP():
 
 
 
-def capture_image(camera_position, camera_orientation, file_name):
+def capture_image(camera_position, camera_orientation, file_name, file_name_rgb):
 
     if os.path.exists(file_name):
         os.remove(file_name)  
@@ -246,7 +246,7 @@ def capture_image(camera_position, camera_orientation, file_name):
     proj_matrix = cvK2BulletP()
 
 
-    _, _, _, _, seg_img = p.getCameraImage(
+    _, _, rgb_img, depth_img, seg_img = p.getCameraImage(
         width=width,           
         height=height,           
         viewMatrix=view_matrix,
@@ -262,15 +262,27 @@ def capture_image(camera_position, camera_orientation, file_name):
     seg_mask = cv2.cvtColor(arm_mask, cv2.COLOR_GRAY2BGR)
     cv2.imwrite(file_name, seg_mask)
 
+    rgb_array = np.reshape(rgb_img, (height, width, 4))[:, :, :3]
+    print(rgb_array)
+    rgb_array = cv2.cvtColor(rgb_array, cv2.COLOR_RGB2BGR)
+    cv2.imwrite(file_name_rgb, rgb_array)
+
 
 
 filtered_image_dir = "filtered_arm_pics_fin_rlds"
+filtered_image_dir_rgb = "filtered_arm_pics_fin_rlds_rgb"
+
 
 if os.path.exists(filtered_image_dir):
     shutil.rmtree(filtered_image_dir)
 
 os.makedirs(filtered_image_dir)
 
+
+if os.path.exists(filtered_image_dir_rgb):
+    shutil.rmtree(filtered_image_dir_rgb)
+
+os.makedirs(filtered_image_dir_rgb)
 
 """
 scene - 2
@@ -457,7 +469,9 @@ for idx, joint_pos in enumerate(joint_positions):
 
     # Capture and save an image of the current camera position
     image_name = os.path.join(filtered_image_dir, f"camera_position_{idx}.png")
-    capture_image(camera_position, camera_orientation, image_name)
+
+    image_name_rgb = os.path.join(filtered_image_dir_rgb, f"camera_position_{idx}.png")
+    capture_image(camera_position, camera_orientation, image_name, image_name_rgb)
 
 
 p.disconnect()

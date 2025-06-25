@@ -43,55 +43,13 @@ joint_positions = []
 
 
 # when the .txt files are properly formatted
-with open("Data-Extraction/2/joint_ps.txt", "r") as file:
+with open("Data-Extraction/29838012.svo/joint_ps.txt", "r") as file:
     for line in file:
         try:
             joint_positions.append(eval(line.strip()))  # Read joint positions as a list
         except SyntaxError as e:
             print(f"Syntax error in line: {line.strip()}")
             print(e)
-
-
-# def move_to_position_with_feedback(target_position, target_orientation):
-
-#     ik_joint_positions = p.calculateInverseKinematics(
-#         robot_id, 
-#         end_effector_link_index, 
-#         target_position, 
-#         target_orientation)
-    
-
-#     for i in range(len(ik_joint_positions)):
-#         p.setJointMotorControl2(
-#             bodyUniqueId=robot_id,
-#             jointIndex=i,
-#             controlMode=p.POSITION_CONTROL,
-#             targetPosition=ik_joint_positions[i]
-#         )
-
-
-#     joint_angles = p.calculateInverseKinematics(robot_id, end_effector_link_index, target_position, targetOrientation=target_orientation , 
-#                                              maxNumIterations=1000 )
-
-#     for i in range(len(joint_angles)):
-#         p.resetJointState(robot_id , i,joint_angles[i])
-
-
-    # joint_positions = p.calculateInverseKinematics(
-    #     robot_id,
-    #     end_effector_link_index,
-    #     target_position,
-    #     target_orientation
-    # )
-
-    # # Ignore physics by directly resetting joint states
-    # for i in range(len(joint_positions)):
-    #     p.resetJointState(robot_id, i, joint_positions[i])
-
-
-    # for _ in range(500): 
-    #     p.stepSimulation()
-    
 
 
 def move_to_joint_position_with_feedback(joint_positions):
@@ -178,10 +136,11 @@ def cvK2BulletP():
     scene - 2
     """
     K_old = np.array([
-        [522.061, 0, 661.827],
-        [0, 522.061, 355.399],
-        [0, 0, 1]
-    ])
+        [522.8001709 ,   0.        , 639.23620605],
+        [  0.        , 522.8001709 , 352.50137329],
+        [  0.        ,   0.        ,   1.        ]
+       ]
+    )
 
     """
     All AutoLab setup 
@@ -196,7 +155,6 @@ def cvK2BulletP():
     #    [  0.        ,   0.        ,   1.        ]])
     
     K = update_intrinsic_matrix(K = K_old , old_dims = old_dims , new_dims = new_dims)
-
     print(K)
 
 
@@ -263,14 +221,14 @@ def capture_image(camera_position, camera_orientation, file_name, file_name_rgb)
     cv2.imwrite(file_name, seg_mask)
 
     rgb_array = np.reshape(rgb_img, (height, width, 4))[:, :, :3]
-    print(rgb_array)
+    #print(rgb_array)
     rgb_array = cv2.cvtColor(rgb_array, cv2.COLOR_RGB2BGR)
     cv2.imwrite(file_name_rgb, rgb_array)
 
 
 
-filtered_image_dir = "filtered_arm_pics_fin_rlds"
-filtered_image_dir_rgb = "filtered_arm_pics_fin_rlds_rgb"
+filtered_image_dir = "Data-Extraction/29838012.svo/simulation/franka/right_filtered_arm_pics_fin_rlds"
+filtered_image_dir_rgb = "Data-Extraction/29838012.svo/simulation/franka/right_filtered_arm_pics_fin_rlds_rgb"
 
 
 if os.path.exists(filtered_image_dir):
@@ -292,8 +250,9 @@ scene - 2
 # camera_orientation = p.getQuaternionFromEuler([-1.77092, -0.0652779, -2.76283])
 
 # the below one is for camera - 29431508 right 
-camera_position = [0.326989,	0.459881	,0.303022]
-camera_orientation = p.getQuaternionFromEuler([-1.77039	,-0.0659621	,-2.76027])
+
+camera_position = [0.289047, 0.482136, 0.605396]
+camera_orientation = p.getQuaternionFromEuler([-2.322515, -0.076585, -2.841773])
 
 # the below one is for camera - 29513368 left 
 # camera_position = [0.39315361,-0.31915743 ,0.37105794 ]

@@ -51,7 +51,7 @@ dependencies:
       - numpy==1.26.4
       - opencv-contrib-python==4.6.0.66
       - opencv-python==4.6.0.66
-      - pyzed==4.2
       - requests==2.32.3
       - urllib3==2.3.0
-prefix: /home/aniruth/miniconda3/envs/svo_reader
+      - pyzed==4.2
+prefix: /home/rrcadmin/miniconda3/envs/svo_reader

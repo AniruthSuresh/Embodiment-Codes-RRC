@@ -14,20 +14,20 @@ import matplotlib.pyplot as plt
 import shutil
 
 
-p.connect(p.GUI)
+p.connect(p.DIRECT)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
 
 p.loadURDF("plane.urdf")
 p.setGravity(0, 0, -9.8)
 
 
-robot_id = p.loadURDF("../URDF/src_xarm/airobot/urdfs/xarm7_robot.urdf")
+robot_id = p.loadURDF("URDF/src_xarm/airobot/urdfs/xarm7_robot.urdf")
 end_effector_link_index = 7
 positions = []
     
 
 
-with open("../data/scene_4/cart_pos.txt", "r") as file:
+with open("Data-Extraction/24400334.svo/cart_pos.txt", "r") as file:
     for line in file:
         positions.append(eval(line.strip()))
 
@@ -51,9 +51,7 @@ def move_to_position_with_feedback(target_position, target_orientation):
         )
 
 
-
-
-    for _ in range(1000): 
+    for _ in range(3000): 
         p.stepSimulation()
     
 
@@ -97,7 +95,7 @@ def cvK2BulletP():
     # https://pybullet.org/Bullet/phpBB3/viewtopic.php?t=12901
     """ 
 
-    near = 0.1
+    near = 0.12
     far = 3.1
 
     h = 180
@@ -137,9 +135,17 @@ def cvK2BulletP():
     # K_old = np.array([[524.12890625 , 0 , 639.77941895] , 
     # [0,524.12890625 , 370.27819824] ,
     # [0,0,1]] )
-    K_old = np.array([[524.24609375,   0.        , 639.77758789],
-       [  0.        , 524.24609375, 370.27789307],
-       [  0.        ,   0.        ,   1.        ]])
+    # K_old = np.array([[524.24609375,   0.        , 639.77758789],
+    #    [  0.        , 524.24609375, 370.27789307],
+    #    [  0.        ,   0.        ,   1.        ]])
+    """
+    scene - 2
+    """
+    K_old = np.array([
+        [531.689, 0, 636.151],
+        [0, 531.689, 344.009],
+        [0, 0, 1]
+    ])
 
 
     K = update_intrinsic_matrix(K = K_old , old_dims = old_dims , new_dims = new_dims)
@@ -166,7 +172,7 @@ def cvK2BulletP():
 
 
 
-def capture_image(camera_position, camera_orientation, file_name):
+def capture_image(camera_position, camera_orientation, file_name, file_name_rgb):
 
     if os.path.exists(file_name):
         os.remove(file_name)  
@@ -193,7 +199,7 @@ def capture_image(camera_position, camera_orientation, file_name):
     proj_matrix = cvK2BulletP()
 
 
-    _, _, _, _, seg_img = p.getCameraImage(
+    _, _, rgb_image ,depth_img, seg_img = p.getCameraImage(
         width=width,           
         height=height,           
         viewMatrix=view_matrix,
@@ -209,9 +215,15 @@ def capture_image(camera_position, camera_orientation, file_name):
     seg_mask = cv2.cvtColor(arm_mask, cv2.COLOR_GRAY2BGR)
     cv2.imwrite(file_name, seg_mask)
 
+    rgb_array = np.reshape(rgb_image, (height, width, 4))[:, :, :3]
+    print(rgb_array)
+    rgb_array = cv2.cvtColor(rgb_array, cv2.COLOR_RGB2BGR)
+    cv2.imwrite(file_name_rgb, rgb_array)
 
 
-filtered_image_dir = "filtered_arm_pics_fin_rlds"
+filtered_image_dir = "Data-Extraction/24400334.svo/simulation/xarm/left_filtered_arm_pics_fin_rlds"
+filtered_image_dir_rgb = "Data-Extraction/24400334.svo/simulation/xarm/left_filtered_arm_pics_fin_rlds_rgb"
+
 
 if os.path.exists(filtered_image_dir):
     shutil.rmtree(filtered_image_dir)
@@ -219,14 +231,35 @@ if os.path.exists(filtered_image_dir):
 os.makedirs(filtered_image_dir)
 
 
+if os.path.exists(filtered_image_dir_rgb):
+    shutil.rmtree(filtered_image_dir_rgb)
+
+os.makedirs(filtered_image_dir_rgb)
+
+
+"""
+scene - 2
+"""
+# the below one is for camera - 29431508 left 
+# camera_position = [0.438195 ,0.504532 ,0.295449,]
+# camera_orientation = p.getQuaternionFromEuler([-1.77092, -0.0652779, -2.76283])
+
+# the below one is for camera - 29431508 right 
+camera_position = [0.174162, -0.371710, 0.512578]
+camera_orientation = p.getQuaternionFromEuler([-2.076301, -0.081415, -1.015417])
+
+# the below one is for camera - 29513368 left 
+# camera_position = [0.39315361,-0.31915743 ,0.37105794 ]
+# camera_orientation = p.getQuaternionFromEuler([-1.81866455,-0.02428309,0.09807736])
+
 
 """
 scene - 4 - GOOD !
 """
 # left
 
-camera_position = [0.085036	,0.563473	,0.416859]
-camera_orientation = p.getQuaternionFromEuler([-1.95721,	-0.0233935	,-2.11812])
+# camera_position = [0.085036	,0.563473	,0.416859]
+# camera_orientation = p.getQuaternionFromEuler([-1.95721,	-0.0233935	,-2.11812])
 
 
 
@@ -266,7 +299,9 @@ for idx, pos in enumerate(positions):
     move_to_position_with_feedback(target_position, target_orientation)
     # Capture and save an image of the current camera position
     image_name = os.path.join(filtered_image_dir, f"camera_position_{idx}.png")
-    capture_image(camera_position, camera_orientation, image_name)
+    image_name_rgb = os.path.join(filtered_image_dir_rgb, f"camera_position_{idx}.png")
+
+    capture_image(camera_position, camera_orientation, image_name, image_name_rgb)
 
 
 

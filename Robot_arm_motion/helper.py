@@ -17,6 +17,9 @@ def overlay_images_to_video(folder1, folder2, output_folder='overlayed_images', 
     images1.sort(key=lambda x: int(re.search(r'(\d+)', x).group()))
     images2.sort(key=lambda x: int(re.search(r'(\d+)', x).group()))
 
+    print(images1)
+    print(images2)
+
     num_images = min(len(images1), len(images2))
 
     # print(images1,images2)
@@ -47,8 +50,8 @@ def overlay_images_to_video(folder1, folder2, output_folder='overlayed_images', 
             print(f"Error: Could not read images {images1[i]} or {images2[i]}")
             continue
 
-        print(img1.shape)
-        print(img2.shape)
+        # print(img1.shape)
+        # print(img2.shape)
 
         overlay = cv2.addWeighted(img1, 0.5, img2, 0.5, 0)
 
@@ -63,8 +66,8 @@ def overlay_images_to_video(folder1, folder2, output_folder='overlayed_images', 
     print(f"Overlayed video saved as '{video_output}'.")
  
 
-masked_pics = "filtered_arm_pics_fin_rlds"
+masked_pics = "Data-Extraction/29838012.svo/simulation/franka/right_filtered_arm_pics_fin_rlds"
 
-original_pics_path = "Data-Extraction/2/images_right"
+original_pics_path = "Data-Extraction/29838012.svo/images_right_resized"
 
-overlay_images_to_video(original_pics_path , masked_pics , video_output = "scene_2_overlay.mp4")
+overlay_images_to_video(original_pics_path , masked_pics ,output_folder="Data-Extraction/29838012.svo/simulation/franka/right_overlay_images", video_output = "scene_2_overlay.mp4")

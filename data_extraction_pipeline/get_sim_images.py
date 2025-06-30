@@ -285,6 +285,15 @@ def get_camera_pose(file_path):
 
     return data_list[:3],data_list[3:]
 
+def get_gripper_position(file_path):
+    with open(file_path, 'r') as f:
+        content = f.read().strip()  # Read and remove leading/trailing whitespace
+
+    data_list = ast.literal_eval(content)
+
+    return data_list
+
+
 def franka_main(base_path, camera_position, camera_orientation, K, direction = "left", full_res = False):
 
     if full_res == True:
@@ -348,7 +357,7 @@ def franka_main(base_path, camera_position, camera_orientation, K, direction = "
         video_path = os.path.join(base_path, "simulation", "franka", direction,"overlay.mp4")
 
 
-    overlay_images_to_video(folder1,folder2,overlay_path,video_path)
+    overlay_images_to_video(folder1,folder2,overlay_path,video_path)    
 
 def xarm_main(base_path, camera_position, camera_orientation, K, direction = "left", full_res = False):
 
@@ -442,10 +451,6 @@ if __name__ == "__main__":
         direction = "left"
         K = get_camera_intrinsics(os.path.join(data_dir,"camera_params.txt"))
         camera_position, camera_orientation = get_camera_pose(os.path.join(data_dir,"extrinsics_left.txt"))
-
-        print(K)
-        print(camera_position)
-        print(camera_orientation)
 
         generation_loop(data_dir,camera_position,camera_orientation,K)
 

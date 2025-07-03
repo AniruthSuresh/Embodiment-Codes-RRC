@@ -8,7 +8,12 @@ svo_files = ["Data-Extraction/29838012.svo"]
 
 
 
-def get_images_intrinsics(svo_directory):
+def get_images_intrinsics(svo_directory,output_base):
+
+    relative_path,svo_file,metadata_path = svo_directory
+    rel_base = os.path.basename(relative_path)
+
+    svo_directory = os.path.join(output_base,rel_base+svo_file[:-4])
 
     target_height = 180
     target_width = 320
@@ -82,23 +87,24 @@ def get_images_intrinsics(svo_directory):
     print("Finished extracting, downscaling, and saving images.")
 
 if __name__ == "__main__":
-    paths = [
-    "/scratch/darshil/cross-emb-data/Thu_Nov_30_16:30:12_202328834630",
-    "/scratch/darshil/cross-emb-data/Wed_Jul_12_21:35:14_202323897859",
-    "/scratch/darshil/cross-emb-data/Tue_Jun__6_11:52:15_202329838012",
-    "/scratch/darshil/cross-emb-data/Tue_Oct_24_18:22:52_202328451778",
-    "/scratch/darshil/cross-emb-data/Tue_Nov_28_14:05:05_202320252535",
-    "/scratch/darshil/cross-emb-data/Wed_Jan_10_15:00:51_202428451778",
-    "/scratch/darshil/cross-emb-data/Wed_Jan_10_15:12:19_202428451778",
-    "/scratch/darshil/cross-emb-data/Wed_Jan_10_15:13:01_202428451778",
-    "/scratch/darshil/cross-emb-data/Wed_Jan_10_15:20:58_202428451778",
-    "/scratch/darshil/cross-emb-data/Wed_Jan_10_15:53:38_202428451778",
-    "/scratch/darshil/cross-emb-data/Wed_Jan_10_15:54:03_202428451778",
-    "/scratch/darshil/cross-emb-data/Tue_Nov_28_14:02:40_202320252535"
-    ]
+    output_base = '/scratch/darshil/cross-emb-data'
 
-    for svo_path in paths:
-        get_images_intrinsics(svo_path)
+    svo_list = [
+            ('TRI/success/2023-10-24/Tue_Oct_24_15:05:46_2023','28451778.svo','TRI+52ca9b6a+2023-10-24-15h-05m-46s'),
+            ('TRI/success/2023-10-24/Tue_Oct_24_18:23:27_2023','28451778.svo','TRI+52ca9b6a+2023-10-24-18h-23m-27s'),
+            ('TRI/success/2023-10-25/Wed_Oct_25_10:21:18_2023','28451778.svo','TRI+52ca9b6a+2023-10-25-10h-21m-18s'),
+            ('TRI/success/2023-10-25/Wed_Oct_25_17:06:19_2023','28451778.svo','TRI+52ca9b6a+2023-10-25-17h-06m-19s'),
+            ('TRI/success/2023-10-12/Thu_Oct_12_12:17:09_2023','28451778.svo','TRI+30510ef3+2023-10-12-12h-17m-09s'),
+            ('TRI/success/2023-11-27/Mon_Nov_27_16:30:40_2023','28451778.svo','TRI+52ca9b6a+2023-11-27-16h-30m-40s'),
+            ('TRI/success/2023-11-27/Mon_Nov_27_16:33:29_2023','28451778.svo','TRI+52ca9b6a+2023-11-27-16h-33m-29s'),
+            ('TRI/success/2023-11-27/Mon_Nov_27_17:27:03_2023','28451778.svo','TRI+52ca9b6a+2023-11-27-17h-27m-03s'),
+            ('TRI/success/2023-11-27/Mon_Nov_27_17:29:06_2023','28451778.svo','TRI+52ca9b6a+2023-11-27-17h-29m-06s'),
+            ('TRI/success/2024-01-08/Mon_Jan__8_13:59:49_2024','28451778.svo','TRI+52ca9b6a+2024-01-08-13h-59m-49s')
+        ]
+
+    for svo_path in svo_list:
+        get_images_intrinsics(svo_path,output_base)
 
     # svo_directory = "Data-Extraction/Thu_May_11_14:08:19_202329838012"
     # get_images_intrinsics(svo_directory=svo_directory)
+

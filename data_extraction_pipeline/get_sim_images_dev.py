@@ -40,10 +40,37 @@ def get_cartesians_positions(cart_ps_file):
 
     return cart_positions
 
-def move_to_joint_position_with_feedback(robot_id,joint_positions):
+def move_to_joint_position_with_feedback(robot_id,joint_positions,gripper_pos):
     # Use the joint positions directly and move the robot arm accordingly.
     for i in range(len(joint_positions)):
+    
+        # p.setJointMotorControl2(
+        #     bodyUniqueId=robot_id,
+        #     jointIndex=i,
+        #     controlMode=p.POSITION_CONTROL,
+        #     targetPosition=joint_positions[i]
+        # )
         p.resetJointState(robot_id, i, joint_positions[i])
+
+    for i in [9]:
+        p.resetJointState(robot_id, i, gripper_pos)
+
+        # p.setJointMotorControl2(
+        #     bodyUniqueId=robot_id,
+        #     jointIndex=i,
+        #     controlMode=p.POSITION_CONTROL,
+        #     targetPosition=gripper_pos
+        # )
+
+    # for i in [15]:
+    #     p.resetJointState(robot_id, i, -1*gripper_pos)
+
+        # p.setJointMotorControl2(
+        #     bodyUniqueId=robot_id,
+        #     jointIndex=i,
+        #     controlMode=p.POSITION_CONTROL,
+        #     targetPosition=-1*gripper_pos
+        # )
 
     for _ in range(500):  # Step through the simulation to allow motion.
         p.stepSimulation()
@@ -307,13 +334,29 @@ def franka_main(base_path, camera_position, camera_orientation, K, direction = "
     p.loadURDF("plane.urdf")
     p.setGravity(0, 0, -9.8)
 
-    robot_id = p.loadURDF("/home/rrcadmin/cross-emb/Embodiment-Codes-RRC/URDF/franka_panda/panda_with_2F85_sec.urdf",[0, 0, 0], useFixedBase=True)
+    robot_id = p.loadURDF("URDF/franka_panda/panda_with_2F85_sec.urdf",[0, 0, 0], useFixedBase=True)
+
+    c = p.createConstraint(robot_id, 11, robot_id, 12, p.JOINT_POINT2POINT, [0, 0, 0], [0, -0.014, 0.043], [0, -0.034, 0.021])
+    p.changeConstraint(c, erp=0.1, maxForce=1000)
+    c = p.createConstraint(robot_id, 13, robot_id, 14, p.JOINT_POINT2POINT, [0, 0, 0], [0, -0.014, 0.043], [0, -0.034, 0.021])
+    p.changeConstraint(c, erp=0.1, maxForce=1000)
+    p.setJointMotorControl2(robot_id, 14, p.VELOCITY_CONTROL, targetVelocity=0, force=0)
+    p.setJointMotorControl2(robot_id, 13, p.VELOCITY_CONTROL, targetVelocity=0, force=0)
+    p.setJointMotorControl2(robot_id, 11, p.VELOCITY_CONTROL, targetVelocity=0, force=0)
+    p.setJointMotorControl2(robot_id, 12, p.VELOCITY_CONTROL, targetVelocity=0, force=0)
+    
+    c = p.createConstraint(robot_id, 9, robot_id, 15, p.JOINT_GEAR, [1, 0, 0], [0, 0, 0], [0, 0, 0])
+    p.changeConstraint(c, gearRatio=-1, erp=0.1, maxForce=50)
 
     end_effector_link_index = 7
 
     joint_file = os.path.join(base_path,"joint_ps.txt")
     
     joint_positions = get_joint_positions(joint_ps_file=joint_file)
+
+    gripper_file = os.path.join(base_path,"gripper_pos.txt")
+
+    gripper_pos = get_gripper_position(gripper_file)
 
     camera_orientation = p.getQuaternionFromEuler(camera_orientation)
 
@@ -336,7 +379,7 @@ def franka_main(base_path, camera_position, camera_orientation, K, direction = "
     masks_dir, img_dir = prepare_output_directories(base_path,"franka",direction,full_res)
 
     for idx, joint_pos in enumerate(joint_positions):
-        move_to_joint_position_with_feedback(robot_id,joint_pos)  # Move to the joint positions directly
+        move_to_joint_position_with_feedback(robot_id,joint_pos,gripper_pos[idx])  # Move to the joint positions directly
         image_name = os.path.join(masks_dir, f"camera_position_{idx}.png")
         image_name_rgb = os.path.join(img_dir, f"camera_position_{idx}.png")
         capture_image(camera_position, camera_orientation, image_name, image_name_rgb, K, h, w)
@@ -380,6 +423,10 @@ def xarm_main(base_path, camera_position, camera_orientation, K, direction = "le
     
     cart_positions = get_cartesians_positions(cart_ps_file=cart_file)
 
+    gripper_file = os.path.join(base_path,"gripper_pos.txt")
+
+    gripper_pos = get_gripper_position(gripper_file)
+
     camera_orientation = p.getQuaternionFromEuler(camera_orientation)
 
     visual_shape_id = p.createVisualShape(
@@ -401,7 +448,6 @@ def xarm_main(base_path, camera_position, camera_orientation, K, direction = "le
     masks_dir, img_dir = prepare_output_directories(base_path,"xarm",direction,full_res)
 
     for idx, pos in enumerate(cart_positions):
-
         target_position = pos[:3]
         target_orientation = p.getQuaternionFromEuler(pos[3:])
         move_to_position_with_feedback(robot_id,end_effector_link_index,target_position, target_orientation)
@@ -430,11 +476,11 @@ def xarm_main(base_path, camera_position, camera_orientation, K, direction = "le
 
 def generation_loop(base_path, camera_position, camera_orientation, K):
 
-    full_res_list = [True,False]
+    full_res_list = [False]
     direction = 'left'
 
     for res in full_res_list:
-        xarm_main(base_path=base_path,camera_position=camera_position,camera_orientation=camera_orientation,K=K,direction=direction,full_res=res)
+        #xarm_main(base_path=base_path,camera_position=camera_position,camera_orientation=camera_orientation,K=K,direction=direction,full_res=res)
         franka_main(base_path=base_path,camera_position=camera_position,camera_orientation=camera_orientation,K=K,direction=direction,full_res=res)
 
 
@@ -443,33 +489,17 @@ def generation_loop(base_path, camera_position, camera_orientation, K):
 
 if __name__ == "__main__":
 
-    base_path = "/scratch/darshil/cross-emb-data"
-    # output_base = '/scratch/darshil/cross-emb-data'
+    base_path = "/scratch/darshil/cross-emb-test"
 
-    svo_list = [
-            ('TRI/success/2023-10-24/Tue_Oct_24_15:05:46_2023','28451778.svo','TRI+52ca9b6a+2023-10-24-15h-05m-46s'),
-            ('TRI/success/2023-10-24/Tue_Oct_24_18:23:27_2023','28451778.svo','TRI+52ca9b6a+2023-10-24-18h-23m-27s'),
-            ('TRI/success/2023-10-25/Wed_Oct_25_10:21:18_2023','28451778.svo','TRI+52ca9b6a+2023-10-25-10h-21m-18s'),
-            ('TRI/success/2023-10-25/Wed_Oct_25_17:06:19_2023','28451778.svo','TRI+52ca9b6a+2023-10-25-17h-06m-19s'),
-            ('TRI/success/2023-10-12/Thu_Oct_12_12:17:09_2023','28451778.svo','TRI+30510ef3+2023-10-12-12h-17m-09s'),
-            ('TRI/success/2023-11-27/Mon_Nov_27_16:30:40_2023','28451778.svo','TRI+52ca9b6a+2023-11-27-16h-30m-40s'),
-            ('TRI/success/2023-11-27/Mon_Nov_27_16:33:29_2023','28451778.svo','TRI+52ca9b6a+2023-11-27-16h-33m-29s'),
-            ('TRI/success/2023-11-27/Mon_Nov_27_17:27:03_2023','28451778.svo','TRI+52ca9b6a+2023-11-27-17h-27m-03s'),
-            ('TRI/success/2023-11-27/Mon_Nov_27_17:29:06_2023','28451778.svo','TRI+52ca9b6a+2023-11-27-17h-29m-06s'),
-            ('TRI/success/2024-01-08/Mon_Jan__8_13:59:49_2024','28451778.svo','TRI+52ca9b6a+2024-01-08-13h-59m-49s')
-        ]
-
-
-    for relative_path,svo_file,metadata_path in svo_list:
-        
-        rel_base = os.path.basename(relative_path)
-
-        data_dir = os.path.join(base_path,rel_base+svo_file[:-4])
+    for dire in os.listdir(base_path):
+        data_dir = os.path.join(base_path,dire)
         
         direction = "left"
         K = get_camera_intrinsics(os.path.join(data_dir,"camera_params.txt"))
         camera_position, camera_orientation = get_camera_pose(os.path.join(data_dir,"extrinsics_left.txt"))
 
         generation_loop(data_dir,camera_position,camera_orientation,K)
+
+        break
 
 

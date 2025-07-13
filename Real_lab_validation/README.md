@@ -29,7 +29,7 @@ Combining these gives you the full extrinsic transformation . (this should ideal
 
 ### Step 4: Generate Overlays
 
-To generate accurate overlays of the robot onto the real image frames, ensure the following components are correctly set:
+To generate accurate overlays of the robot onto the real image frames, ensure the following components are correctly set in the `get_base_to_cam_col_opt_frame.py`
 
 - **Camera Intrinsics (`K` matrix)**:  
   Obtained from `camera_info.csv` generated in **Step 1**. 

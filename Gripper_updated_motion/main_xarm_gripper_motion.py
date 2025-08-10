@@ -312,6 +312,8 @@ for idx, pose in enumerate(positions):
     
     gripper_pos = gripper_positions[idx]
 
+    print(f"Step {idx}: Setting gripper joint position to {gripper_pos:.4f} radians.")
+    
     move_to_position_with_feedback(target_position, target_orientation_quat, gripper_pos)
 
     image_name = os.path.join(filtered_image_dir, f"camera_position_{idx}.png")

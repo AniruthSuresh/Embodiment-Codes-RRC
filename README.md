@@ -45,4 +45,4 @@ You’ll need to update:
 - Camera position and orientation (from the `trajectory.h5` file — this acts as extrinsics)
 
 
-**NOTE:** I've attached one `data` folder corresponding to a specific RLDS scene (SCEM-4 to be precise) and have already run the motion for it. You can check this out, replicate, and improve.
+**NOTE:** I've attached one `data` folder corresponding to a specific RLDS scene (SCENE-4 to be precise) and have already run the motion for it. You can check this out, replicate, and improve.

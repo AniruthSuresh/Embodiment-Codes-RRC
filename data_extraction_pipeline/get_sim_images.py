@@ -459,6 +459,12 @@ if __name__ == "__main__":
             ('TRI/success/2024-01-08/Mon_Jan__8_13:59:49_2024','28451778.svo','TRI+52ca9b6a+2024-01-08-13h-59m-49s')
         ]
 
+    svo_list = [
+            ('TRI/success/2023-11-27/Mon_Nov_27_16:30:40_2023','28451778.svo','TRI+52ca9b6a+2023-11-27-16h-30m-40s'),
+            ('TRI/success/2023-11-27/Mon_Nov_27_17:27:03_2023','28451778.svo','TRI+52ca9b6a+2023-11-27-17h-27m-03s'),
+
+    ]
+
 
     for relative_path,svo_file,metadata_path in svo_list:
         
